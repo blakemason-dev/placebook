@@ -12,6 +12,8 @@ interface IInputProps {
     label?: string;
     errorText?: string;
     validators?: [{type: string}];
+    initialValue?: string;
+    initialValid?: boolean;
     onInput: (id: string, value: string, isValid: boolean) => void;
 }
 
@@ -47,8 +49,8 @@ const inputReducer = (state: IInputState, action: IInputAction) => {
 
 const Input = (props: IInputProps) => {
     const [inputState, dispatch] = useReducer(inputReducer, {
-        value: '', 
-        isValid: false,
+        value: props.initialValue || '', 
+        isValid: props.initialValid || false,
         isTouched: false
     });
 

@@ -1,87 +1,34 @@
-import React, { useCallback, useReducer } from 'react';
+import React from 'react';
 import Button from '../../shared/components/FormElements/Button';
 
 import Input from '../../shared/components/FormElements/Input';
 import { VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE } from '../../shared/util/validators';
-import './NewPlace.css';
-
-interface iFormState {
-  inputs: {
-    title: {
-      value: string;
-      isValid: boolean;
-    },
-    description: {
-      value: string;
-      isValid: boolean;
-    },
-  },
-  isValid: boolean;
-}
-
-interface iFormAction {
-  type: string;
-  value: string;
-  inputId: string;
-  isValid: boolean;
-}
-
-const initialState = {
-  inputs: {
-    title: {
-      value: '',
-      isValid: false
-    },
-    description: {
-      value: '',
-      isValid: false
-    },
-  },
-  isValid: false
-}
-
-const formReducer = (state: iFormState, action: iFormAction) => {
-  switch (action.type) {
-    case 'INPUT_CHANGE':
-      let formIsValid = true;
-      type ObjectKey = keyof typeof state.inputs;
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId) {
-          formIsValid = formIsValid && action.isValid;
-        } else {
-          formIsValid = formIsValid && state.inputs[inputId as ObjectKey].isValid;
-        }
-      }
-
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: { value: action.value, isValid: action.isValid }
-        },
-        isValid: formIsValid
-      }
-    default:
-      return state;
-  }
-}
+import { useForm } from '../../shared/hooks/form-hook';
+import './PlaceForm.css';
 
 const NewPlace = () => {
-  const [formState, dispatch] = useReducer(formReducer, initialState)
-
-  const inputHandler = useCallback((id: string, value: string, isValid: boolean) => {
-    dispatch({
-      type: 'INPUT_CHANGE', 
-      value: value, 
-      isValid: isValid, 
-      inputId: id
-    });
-  },  []);
-
+  const [formState, inputHandler] = useForm(
+    {
+      title: {
+          value: '',
+          isValid: false
+      },
+      description: {
+          value: '',
+          isValid: false
+      },
+      address: {
+          value: '',
+          isValid: false
+      },
+    },
+    false
+  );
+  
   const placeSubmitHolder = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(formState.inputs); // send this to the backend this is ddd
+    console.log(formState.inputs); // send this to the backend
   }
 
   return (
