@@ -30,28 +30,38 @@ const DUMMY_PLACES = [
     }
 ]
 
-const getPlaceById = (req, res, next) => {
+const getPlaceById = async (req, res, next) => {
     const placeId = req.params.pid;
-    const place = DUMMY_PLACES.find(p => {
-        return p.id === placeId;
-    });
+    
+    let place;
+    try {
+        place = await Place.findById(placeId);
+    } catch {
+        return next(new HttpError('Could not find place', 500));
+    }
 
     if (!place) {
         return next(new HttpError('Could not find a place for the provided place id', 404));
     }
 
-    res.json({ place: place });
+    res.json({ place: place.toObject( { getters: true }) });
 }
 
-const getPlacesByUserId = (req, res, next) => {
+const getPlacesByUserId = async (req, res, next) => {
     const userId = req.params.uid;
-    const places = DUMMY_PLACES.filter(p => p.creator === userId);
 
-    if (!places || places.length === 0) {
-        return next(new HttpError('Could not find places for the provided user id', 404));
+    let places;
+    try {
+        places = await Place.find({ creator: userId });
+    } catch (err) {
+        return next(new HttpError('Fetching place(s) from database failed for provided user', 500));
     }
 
-    res.json({ places: places })
+    if (!places || places.length === 0) {
+        return next(new HttpError('Could not find place(s) for the provided user id', 404));
+    }
+
+    res.json({ places: places.map(p => p.toObject({ getters: true })) })
 }
 
 const createPlace = async (req, res, next) => {
@@ -74,59 +84,63 @@ const createPlace = async (req, res, next) => {
         description,
         address,
         location: coordinates,
-        image: 'https://dragonball.guru/wp-content/uploads/2021/03/majin-buu-happy.jpg',
+        image: 'https://static.wikia.nocookie.net/dragonball/images/5/55/CellGamesArena.jpg',
         creator
     });
 
-    // const createdPlace = {
-    //     id: uuidv4(),
-    //     title: title,
-    //     description: description,
-    //     location: coordinates,
-    //     address: address,
-    //     creator: creator,
-    // }
-
-    DUMMY_PLACES.push(createdPlace);
+    try {
+        await createdPlace.save();
+    } catch (err) {
+        return next(new HttpError('Creating place failed, please try again', 500));
+    }
 
     res.status(201).json({place: createdPlace});
 }
 
-const updatePlace = (req, res, next) => {
+const updatePlace = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
 
-    const { title, description, coordinates, address, creator } = req.body;
+    const { title, description } = req.body;
     const placeId = req.params.pid;
 
-    const updatedPlace = { ...DUMMY_PLACES.find(p => p.id === placeId)}; // grab a copy
-    const placeIndex = DUMMY_PLACES.findIndex(p => p.id === placeId);
-
-    if (placeIndex < 0) {
-        return next(new HttpError('Cannot update non-existant place', 404));
+    let place;
+    try {
+        place = await Place.findById(placeId);
+    } catch (err) {
+        return next(new HttpError('Could not fetch place in database', 500));
     }
 
-    updatedPlace.title = title ? title : DUMMY_PLACES[placeIndex].title;
-    updatedPlace.description = description ? description : DUMMY_PLACES[placeIndex].description;
-    updatedPlace.coordinates = coordinates ? coordinates : DUMMY_PLACES[placeIndex].coordinates;
-    updatedPlace.address = address ? address : DUMMY_PLACES[placeIndex].address;
-    updatedPlace.creator = creator ? creator : DUMMY_PLACES[placeIndex].creator;
+    place.title = title;
+    place.description = description;
 
-    DUMMY_PLACES[placeIndex] = updatedPlace;
-    res.status(200).json({place: updatedPlace});
+    try {
+        await place.save();
+    } catch (err) {
+        return next(new HttpError('Could not update place in database', 500));
+    }
+
+    res.status(200).json({place: place.toObject({ getters: true })});
 }
 
-const deletePlace = (req, res, next) => {
+const deletePlace = async (req, res, next) => {
     const placeId = req.params.pid;
-    const placeIndex = DUMMY_PLACES.findIndex(p => p.id === placeId);
-
-    if (placeIndex < 0) {
-        return next(new HttpError('Cannot delete non-existant place', 404));
+    
+    let place;
+    try {
+        place = await Place.findById(placeId);
+    } catch (err) {
+        return next(new HttpError('Database could not find place to delete', 500));
     }
 
-    DUMMY_PLACES.splice(placeIndex, 1);
+    try {
+       await place.remove();
+    } catch (err) {
+        return next(new HttpError('Database could not delete place', 500));
+    }
+
     res.status(200).json({message: "Place deleted " + placeId})
 }
 
