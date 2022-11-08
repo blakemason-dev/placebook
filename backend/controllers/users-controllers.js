@@ -4,21 +4,6 @@ import { validationResult } from 'express-validator';
 import { HttpError } from '../models/http-error.js';
 import { User } from '../models/user.js';
 
-const DUMMY_USERS = [
-    {
-        id: 'u1',
-        name: 'darth vader',
-        email: 'test@test.com',
-        password: 'testers',
-    },
-    {
-        id: 'u2',
-        name: 'han solo',
-        email: 'test@test.com',
-        password: 'testers',
-    }
-]
-
 const getUsers = async (req, res, next) => {
     let allUsers;
     try {
@@ -36,7 +21,7 @@ const signupUser = async (req, res, next) => {
         return next(new HttpError('Invalid user data'));
     }
 
-    const { name, email, password, places } = req.body;
+    const { name, email, password } = req.body;
 
     let existingUser;
     try {
@@ -54,7 +39,7 @@ const signupUser = async (req, res, next) => {
         email,
         image: 'https://dragonball.guru/wp-content/uploads/2021/03/majin-buu-happy.jpg',
         password, // SERIOUS SECURITY ISSUE, NEEDS TO BE ENCRYPTED
-        places
+        places: []
     });
 
     try {
