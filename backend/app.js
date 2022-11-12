@@ -6,11 +6,18 @@ import { placesRouter } from './routes/places-routes.js';
 import { usersRouter } from './routes/users-routes.js';
 import { HttpError } from './models/http-error.js';
 
-const mongo_uri = 'mongodb+srv://blake:firstMongo@cluster0.ojqrl9n.mongodb.net/places?retryWrites=true&w=majority';
+const mongo_uri = 'mongodb+srv://blake:firstMongo@cluster0.ojqrl9n.mongodb.net/placebook?retryWrites=true&w=majority';
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    next();
+});
 
 app.use('/', (req, res, next) => {
     console.log(req.method, req.originalUrl);

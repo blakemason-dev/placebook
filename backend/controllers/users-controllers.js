@@ -65,7 +65,7 @@ const loginUser = async (req, res, next) => {
         return next(new HttpError('Invalid credentials', 401));
     }
 
-    res.status(200).json({ message: existingUser.email + ' logged in!'})
+    res.status(200).json({ message: existingUser.email + ' logged in!', user: existingUser.toObject({getters: true})})
 }
 
 

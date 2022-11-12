@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import UsersList from '../components/UsersList';
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useHttpClient } from '../../shared/hooks/http-hook';
 
 const Users = () => {
-    const USERS = [
-        {
-            id: 'u1',
-            name: 'darth vader',
-            image: 'https://lumiere-a.akamaihd.net/v1/images/darth-vader-main_4560aff7.jpeg?region=0%2C67%2C1280%2C720&width=600',
-            places: 3
+    const {isLoading, error, sendRequest, clearError} = useHttpClient();
+    const [loadedUsers, setLoadedUsers] = useState<any>(undefined);
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const responseData = await sendRequest('http://localhost:5000/api/users');
+                
+                setLoadedUsers(responseData.users);
+            } catch (err) {
+                
+            }
         }
-    ]
+        fetchUsers();
+    }, [sendRequest]);
 
     return (
-        <UsersList items={USERS} />
+        <>
+            <ErrorModal error={error} onClear={clearError} />
+            {isLoading && <div className='center'><LoadingSpinner /></div>}
+            {!isLoading && loadedUsers && <UsersList items={loadedUsers} />}
+        </>
     )
 }
 

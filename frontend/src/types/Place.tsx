@@ -7,7 +7,7 @@ export interface Place {
     id: string;
     title: string;
     description: string;
-    imageURL: string;
+    image: string;
     address: string;
     creator: string;
     location: Coordinate;

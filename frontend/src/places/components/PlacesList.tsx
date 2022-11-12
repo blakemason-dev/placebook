@@ -7,7 +7,8 @@ import Button from '../../shared/components/FormElements/Button';
 import './PlaceList.css';
 
 interface IProps {
-    items: Place[]
+    items: Place[];
+    onDeletePlace: (deletedPlaceId: string) => void;
 }
 
 const PlacesList = (props: IProps) => {
@@ -27,12 +28,13 @@ const PlacesList = (props: IProps) => {
                 return <PlaceItem 
                     key={place.id} 
                     id={place.id} 
-                    image={place.imageURL}
+                    image={place.image}
                     title={place.title}
                     description={place.description}
                     address={place.address}
                     creatorId={place.creator}
                     coordinates={place.location}
+                    onDelete={props.onDeletePlace}
                 />
             })}
         </ul>

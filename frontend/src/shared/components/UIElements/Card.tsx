@@ -5,7 +5,7 @@ import './Card.css';
 interface IProps {
   className?: string;
   style?: React.CSSProperties | undefined;
-  children: JSX.Element | JSX.Element[];
+  children: JSX.Element | JSX.Element[] | any;
 }
 
 

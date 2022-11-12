@@ -10,7 +10,7 @@ interface User {
     id: string;
     image: string;
     name: string;
-    places: number;
+    places: [any];
 }
 
 interface IProps {
@@ -37,7 +37,7 @@ const UsersList = (props: IProps) => {
                         id={user.id} 
                         image={user.image} 
                         name={user.name}
-                        placeCount={user.places}
+                        placeCount={user.places.length}
                     />
                 )
             })}
