@@ -34,7 +34,7 @@ export const useHttpClient = () => {
             return responseData;
         } catch (err: any) {
             if (err.name === 'AbortError') {
-                console.log('Aborted a fetch request');
+                // console.log('Aborted a fetch request');
             } else {
                 setError(err.message);
                 setIsLoading(false);     

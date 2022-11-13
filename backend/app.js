@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
 
 import { placesRouter } from './routes/places-routes.js';
 import { usersRouter } from './routes/users-routes.js';
@@ -11,6 +13,8 @@ const mongo_uri = 'mongodb+srv://blake:firstMongo@cluster0.ojqrl9n.mongodb.net/p
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -33,6 +37,11 @@ app.use((req, res, next) => {
 });
 
 app.use((error, req, res, next) => {
+    if (req.file) {
+        fs.unlink(req.file.path, (err) => {
+            console.log(err);
+        });
+    }
     if (res.headerSent) {
         return next(error);
     }

@@ -18,6 +18,7 @@ const getUsers = async (req, res, next) => {
 const signupUser = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+
         return next(new HttpError('Invalid user data'));
     }
 
@@ -37,7 +38,7 @@ const signupUser = async (req, res, next) => {
     const newUser = new User({
         name,
         email,
-        image: 'https://dragonball.guru/wp-content/uploads/2021/03/majin-buu-happy.jpg',
+        image: req.file.path,
         password, // SERIOUS SECURITY ISSUE, NEEDS TO BE ENCRYPTED
         places: []
     });

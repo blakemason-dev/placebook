@@ -2,12 +2,15 @@ import express from 'express';
 import { check } from 'express-validator';
 
 import * as usersControllers from '../controllers/users-controllers.js';
+import { fileUpload } from '../middleware/file-upload.js';
 
 const router = express.Router();
 
 router.get('/', usersControllers.getUsers);
 
-router.post('/signup', 
+router.post(
+    '/signup', 
+    fileUpload.single('image'),
     [
         check('name').not().isEmpty(),
         check('email').normalizeEmail().isEmail(),

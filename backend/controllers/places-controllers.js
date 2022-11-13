@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { validationResult } from 'express-validator';
 import mongoose from 'mongoose';
+import fs from 'fs';
 
 import { HttpError } from "../models/http-error.js";
 import { getCoordsForAddress } from '../util/location.js';
@@ -62,7 +63,7 @@ const createPlace = async (req, res, next) => {
         description,
         address,
         location: coordinates,
-        image: 'https://static.wikia.nocookie.net/dragonball/images/5/55/CellGamesArena.jpg',
+        image: req.file.path,
         creator
     });
 
@@ -133,6 +134,8 @@ const deletePlace = async (req, res, next) => {
         return next(new HttpError('Could not find place for this id', 404));
     }
 
+    const imagePath = place.image;
+
     try {
         const sesh = await mongoose.startSession();
         sesh.startTransaction();
@@ -144,6 +147,10 @@ const deletePlace = async (req, res, next) => {
         console.log(err);
         return next(new HttpError('Database could not delete place', 500));
     }
+
+    fs.unlink(imagePath, (err) => {
+        console.log(err);
+    });
 
     res.status(200).json({message: "Place deleted " + placeId})
 }

@@ -2,7 +2,7 @@ import { useCallback, useReducer } from "react";
 
 interface iInputState {
     [key: string]: {
-        value: string;
+        value: any;
         isValid: boolean;
     }
 }

@@ -10,6 +10,7 @@ import { useForm } from '../../shared/hooks/form-hook';
 import './PlaceForm.css';
 import { useHttpClient } from '../../shared/hooks/http-hook';
 import { AuthContext } from '../../shared/context/auth-context';
+import { ImageUpload } from '../../shared/components/FormElements/ImageUpload';
 
 const NewPlace = () => {
   const auth = useContext(AuthContext);
@@ -25,6 +26,10 @@ const NewPlace = () => {
           value: '',
           isValid: false
       },
+      image: {
+        value: null,
+        isValid: false,
+      },
       address: {
           value: '',
           isValid: false
@@ -39,16 +44,17 @@ const NewPlace = () => {
     e.preventDefault();
 
     try {
+      const formData = new FormData();
+      formData.append('title', formState.inputs.title.value);
+      formData.append('description', formState.inputs.description.value);
+      formData.append('image', formState.inputs.image.value);
+      formData.append('address', formState.inputs.address.value);
+      formData.append('creator', auth.userId || '');
+
       await sendRequest(
         'http://localhost:5000/api/places',
         'POST',
-        JSON.stringify({
-          title: formState.inputs.title.value,
-          description: formState.inputs.description.value,
-          address: formState.inputs.address.value,
-          creator: auth.userId
-        }),
-        { 'Content-Type': 'application/json'}
+        formData,
       )
       navigate('/');
     } catch (err) {
@@ -78,6 +84,7 @@ const NewPlace = () => {
           errorText='Please enter a valid description (at least 5 characters)'
           onInput={inputHandler}
         />
+        <ImageUpload id="image" center="center" onInput={inputHandler} errorText="Invalid image"  />
         <Input 
           id='address'
           element='input' 
