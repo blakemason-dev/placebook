@@ -22,8 +22,6 @@ const Auth = () => {
 
     const authSubmitHandler = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        console.log(formState.inputs);
         
         if (isLoginMode) {
             try {
@@ -38,7 +36,7 @@ const Auth = () => {
                         'Content-Type': 'application/json'
                     }
                 ); 
-                auth.login(responseData.user.id);
+                auth.login(responseData.userId, responseData.token, null);
             } catch (err) {
                 
             }
@@ -56,7 +54,7 @@ const Auth = () => {
                     'POST',
                     formData
                 );
-                auth.login(responseData.user.id);
+                auth.login(responseData.userId, responseData.token, null);
             } catch (err) {
 
             }
