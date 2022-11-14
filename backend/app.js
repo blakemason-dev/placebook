@@ -8,7 +8,7 @@ import { placesRouter } from './routes/places-routes.js';
 import { usersRouter } from './routes/users-routes.js';
 import { HttpError } from './models/http-error.js';
 
-const mongo_uri = 'mongodb+srv://blake:firstMongo@cluster0.ojqrl9n.mongodb.net/placebook?retryWrites=true&w=majority';
+const mongo_uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ojqrl9n.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 const app = express();
 
