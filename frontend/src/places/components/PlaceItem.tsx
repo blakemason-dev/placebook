@@ -45,7 +45,7 @@ const PlaceItem = (props: IProps) => {
         setShowConfirmModal(false);
         try {
             const responseData = await sendRequest(
-                `http://localhost:5000/api/places/${props.id}`,
+                `${import.meta.env.VITE_BACKEND_URL}/places/${props.id}`,
                 'DELETE',
                 null,
                 {
@@ -90,7 +90,7 @@ const PlaceItem = (props: IProps) => {
                 <Card className='place-item__content'>
                     {isLoading && <LoadingSpinner asOverlay/>}
                     <div className='place-item__image'>
-                        <img src={`http://localhost:5000/${props.image}`} alt={props.title} />
+                        <img src={`${import.meta.env.VITE_ASSET_URL}/${props.image}`} alt={props.title} />
                     </div>
                     <div className='place-item__info'>
                         <h2>{props.title}</h2>
