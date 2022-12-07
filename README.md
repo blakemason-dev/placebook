@@ -2,7 +2,7 @@
 
 ## Summary
 An application that allows users to store places important to them and allow them to 
-view other uses places.
+view other users places.
 
 ## Tech Notes
 A full MERN application that utilises:
