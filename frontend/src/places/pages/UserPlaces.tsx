@@ -16,7 +16,6 @@ const UserPlaces = () => {
 
     useEffect(() => {
         const fetchUserPlaces = async () => {
-            console.log(import.meta.env.VITE_BACKEND_URL);
             try {
                 const responseData = await sendRequest(
                     `${import.meta.env.VITE_BACKEND_URL}/places/user/${userId}`,

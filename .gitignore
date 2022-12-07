@@ -25,4 +25,6 @@ dist-ssr
 
 # Backend stuff
 nodemon.json
-*.env
+.env
+.env*
+frontend/.env
